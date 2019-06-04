@@ -1,0 +1,19 @@
+//想定外の動き(insert(10)が最初に行われることがある)
+
+run1 = [insert(9)].
+run2 = [insert(6), insert(10)].
+
+head(n(null, null, null)).
+
+head(n(Y, L, R)), Run = [P | Q] :- head(n(Y, L, R, P)), Run = Q.
+
+P = n(null, null, null, insert(X)) :- P = n(X, n(null, null, null), n(null, null, null)).
+P = n(Y, n(A, L, R), R1, insert(X)) :- X =< Y | P = n(Y, n(A, L, R, insert(X)), R1).
+P = n(Y, L1, n(A, L, R), insert(X)) :- X > Y | P = n(Y, L1, n(A, L, R, insert(X))).
+
+head(n(Y, L, R)), '.'(search(X), Q) :- head(n(Y, L, R, search(X))), '.'(Q).
+
+P = n(Y, L, R, search(X)) :- X =:= Y | true(X), P = n(Y, L, R).
+P = n(Y, n(A, L, R), R2, search(X)) :- X < Y | P = n(Y, n(A, L, R, search(X)), R2).
+P = n(Y, L2, n(A, L, R), search(X)) :- X > Y | P = n(Y, L2, n(A, L, R, search(X))).
+P = n(null, L, R, search(X)) :- false(X), P = n(null, L, R).
