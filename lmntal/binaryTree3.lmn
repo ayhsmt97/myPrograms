@@ -1,22 +1,18 @@
 
+run = [insert(9), search(6)].
+run = [insert(6), search(9)].
 
-//head(n(7, n(4, n(null, null, null), n(null, null, null)), n(9, n(null, null, null), n(null, null, null)))).
-head(n(null, null, null), [insert(7), search(9), insert(6), insert(9), search(6)]).
-//insert(head, 7).
-//insert(head, 6).
-//insert(head, 9).
-//search(head, 6).
-//search(head, 7).
+head(n(null, null, null)).
 
-head(n(Y, L, R), [insert(X) | Q]) :- head(n(Y, L, R, insert(X)), Q).
+head(n(Y, L, R)), run = [P | Q] :- head(n(Y, L, R, P)), run = Q.
+
 P = n(null, null, null, insert(X)) :- P = n(X, n(null, null, null), n(null, null, null)).
 P = n(Y, n(A, L, R), R1, insert(X)) :- X =< Y | P = n(Y, n(A, L, R, insert(X)), R1).
 P = n(Y, L1, n(A, L, R), insert(X)) :- X > Y | P = n(Y, L1, n(A, L, R, insert(X))).
 
-head(n(Y, L, R), [search(X) | Q]) :- head(n(Y, L, R, search(X)), Q).
+head(n(Y, L, R)), '.'(search(X), Q) :- head(n(Y, L, R, search(X))), '.'(Q).
+
 P = n(Y, L, R, search(X)) :- X =:= Y | true(X), P = n(Y, L, R).
 P = n(Y, n(A, L, R), R2, search(X)) :- X < Y | P = n(Y, n(A, L, R, search(X)), R2).
 P = n(Y, L2, n(A, L, R), search(X)) :- X > Y | P = n(Y, L2, n(A, L, R, search(X))).
 P = n(null, L, R, search(X)) :- false(X), P = n(null, L, R).
-
-head(X, []) :- head(X).
