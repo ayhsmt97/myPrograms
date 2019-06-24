@@ -1,0 +1,21 @@
+INIT <=> x = 1 & y = 1 & x' = 1 & y' = 1 & leftwall = 0 & rightwall = 20 & ceiling = 20 & score = 0
+             & blklen = 2 & blkvisible = 1.
+BLOCKX := {4*j+2 | i in {0 | k in {0..2}}, j in {i..4}}.
+BLOCKY := {3*i+10 | i in {0..2}, j in {0 | k in {0..4}}}.
+BLKVISIBLE := {1 | i in {1..15}}.
+BLOCK(n) <=> [](BLOCKX[n]-blklen/2 <= x- <= BLOCKX[n]+blklen/2 & y- = BLOCKY[n] & BLKVISIBLE[n]- = 1 =>
+                x'' = 0 & y' = -y'- & BLKVISIBLE[n] = 0 & score = score- + 10).
+BLOCKS := {BLOCK(k) | k in {1..15}}.
+CONST <=> [](leftwall' = 0 & rightwall' = 0 & ceiling' = 0 & blklen' = 0).
+BALL <=> [](x'' = 0 & y'' = 0).
+BLKVISIBLE <=> [](blkvisible' = 0).
+SCORE <=> [](score' = 0).
+XWALL <=> [](x- <= leftwall | x- >= rightwall => x' = -x'- & y'' = 0).
+CEILING <=> [](y- >= ceiling => x'' = 0 & y' = -y'-).
+FALL <=> [](y- <= 0 => x' = 0 & y' = 0).
+//BLOCK <=> [](blkx-blklen/2 <= x- <= blkx+blklen/2 & y- = blky & blkvisible- = 1 =>
+//            x'' = 0 & y' = -y'- & blkvisible = 0 & score = score- + 10).
+
+INIT, CONST.
+BALL << (XWALL, CEILING) << FALL.
+(SCORE, BLKVISIBLE, BALL) << BLOCKS.
