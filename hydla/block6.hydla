@@ -1,0 +1,36 @@
+//unknown error
+
+INIT <=> x = 8 & y = 8 & x' = 1 & y' = -1 & leftwall = 0 & rightwall = 20 & ceiling = 20 & score = 0
+             & blklen = 2 & blkthk = 1 & barx = 10 & barx' = 0 & bary = 0 & barlen = 4 & barspd = 2.
+BLOCKX := {4*j+2 | i in {0 | k in {0..2}}, j in {i..4}}.
+BLOCKY := {3*i+10 | i in {0..2}, j in {0 | k in {0..4}}}.
+BLKVISIBLE := {blkvisible1..blkvisible15}.
+BLKVISIBLEINIT(n) <=> BLKVISIBLE[n] = 1.
+BLKVISIBLEINITS := {BLKVISIBLEINIT(k) | k in {1..15}}.
+BLKVISIBLECONST(n) <=> [](BLKVISIBLE[n]' = 0).
+BLKVISIBLECONSTS := {BLKVISIBLECONST(k) | k in {1..15}}.
+//BLOCKCOLY(n) <=> []((BLOCKX[n]-blklen/2 <= x- <= BLOCKX[n]+blklen/2 & (y- = BLOCKY[n]-blkthk/2 | y- = BLOCKY[n]+blkthk/2))
+//            & BLKVISIBLE[n]- = 1 => x'' = 0 & y' = -y'- & BLKVISIBLE[n] = 0 & score = score- + 10).
+//BLOCKCOLX(n) <=> [](((x- = BLOCKX[n]-blklen/2 | x- = BLOCKX[n]+blklen/2) & BLOCKY[n]-blkthk/2 <= y- <= BLOCKY[n]+blkthk/2)
+//            & BLKVISIBLE[n]- = 1 => x' = -x'- & y'' = 0 & BLKVISIBLE[n] = 0 & score = score- + 10).
+BLOCKCOLY(n) <=> []((BLOCKX[n]-blklen/2 <= x- <= BLOCKX[n]+blklen/2 & y- = BLOCKY[n])
+            & BLKVISIBLE[n]- = 1 => x'' = 0 & y' = -y'- & BLKVISIBLE[n] = 0 & score = score- + 10).
+BLOCKCOLS := {/*BLOCKCOLX(k), */BLOCKCOLY(k) | k in {1..15}}.
+CONST <=> [](leftwall' = 0 & rightwall' = 0 & ceiling' = 0 & blklen' = 0 & bary' = 0 & barlen' = 0 & barspd' = 0).
+BALL <=> [](x'' = 0 & y'' = 0).
+SCORE <=> [](score' = 0).
+BAR <=> [](barx'' = 0).
+BARCOLL <=> [](barx-barlen/2 <= x- <= barx+barlen/2 & y- <= 0 => x'' = 0 & y' = -y'-).
+BARSTAY <=> [](barx' = 0).
+BARMOVEN <=> [](y'- < 0 & x-+(x'-*(bary-y-)/y'-) < barx--barlen/2 => barx' = -barspd).
+BARMOVEP <=> [](y'- < 0 & barx-+barlen/2 < x-+(x'-*(bary-y-)/y'-) => barx' = barspd).
+
+XWALL <=> [](x- <= leftwall | x- >= rightwall => x' = -x'- & y'' = 0).
+CEILING <=> [](y- >= ceiling => x'' = 0 & y' = -y'-).
+//CEILING <=> [](y- >= ceiling => x' = 0 & y' = 0).
+FALL <=> [](y- <= 0 => x' = 0 & y' = 0).
+
+INIT, CONST, BAR, BLKVISIBLEINITS.
+BALL << (XWALL, CEILING) << FALL << BARCOLL.
+(SCORE, BALL, BLKVISIBLECONSTS) << BLOCKCOLS.
+(BAR, BARSTAY) << (BARMOVEP, BARMOVEN).
