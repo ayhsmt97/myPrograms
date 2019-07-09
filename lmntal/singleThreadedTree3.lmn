@@ -50,27 +50,51 @@ Q = i(P, search(X)), {p(P), v(V), rt(RT), $p}, V = Y, RT = true :-
 Q = i(P, search(X)), P = null :- Q = i(P), P = null, false(X). 
 
 % delete rules
+% delete a node with no child (l: null, r: null)
 Q = i(P, delete(X)), {p(P), v(V), l(L), r(R), rt(RT)}, V = Y, L = i(LP), R = i(RP),
 	LP = null, RP = null, RT = false :- X =:= Y | Q = i(P), P = null.
+% delete a node with no child (l: null, r: edge to next)
 Q = i(P, delete(X)), {p(P), v(V), l(L), r(R), rt(RT)}, V = Y, L = i(LP), R = i(RP),
 	LP = null, RT = true, {prev(RP), $pp} :- X =:= Y | Q = i(P), P = null, {$pp}.
+% delete a node with a child (l: null, r: edge to it's child)
 Q = i(P, delete(X)), {p(P), v(V), l(L), r(R), rt(RT)}, V = Y, L = i(LP), R = i(RP),
-	LP = null, RT = false, {p(RP), v(RV), $rp} :- X =:= Y |
-	Q = i(RP), {p(RP), v(RV), $rp}.
-Q = i(P, delete(X)), {p(P), v(V), l(L), r(R)}, V = Y, L = i(LP), R = i(RP),
-	{p(LP), v(LV), $lp}, RP = null :- X =:= Y |
-	Q = i(LP), {p(LP), v(LV), $lp}.
-Q = i(P, delete(X)), {p(P), v(V), l(L), r(R)}, V = Y, L = i(LP), R = i(RP),
-	{p(LP), v(LV), $lp}, {p(RP), v(RV), $rp} :- X =:= Y |
-	Q = i(P, delete(X, searchMax(S))), {p(P), v(V), l(L), r(R)}, V = Y,
-	L = i(LP, S), R = i(RP), {p(LP), v(LV), $lp}, {p(RP), v(RV), $rp}.
-Q = i(P, delete(X, searchMax(S))), {p(P), v(V), l(L), r(R)}, V = Y, M = i(LP, S),
-	{p(LP), v(LV), l(LL), r(LR)}, LL = i(LLP), LR = i(null) :- int(X), int(Y) |
-	Q = i(P), {p(P), v(LV), l(L), r(R)}, M = i(LLP).
-Q = i(P, S), D = searchMax(S), {p(P), r(R), $p}, R = i(RP), {p(RP), $rp} :-
-	Q = i(P), {p(P), r(R), $p}, R = i(RP, S), D = searchMax(S), {p(RP), $rp}.
+	LP = null, RT = false, {p(RP), $rp} :- X =:= Y | Q = i(RP), {p(RP), $rp}.
+% delete a node with a child (l: edge to it's child, r: null, prev: edge from previous(=child))
+Q = i(P, delete(X)), {p(P), v(V), l(L), r(R), rt(RT), prev(PV)}, V = Y, L = i(LP),
+	R = i(RP), RP = null, RT = false, {p(LP), rt(LRT), r(LR), $lp}, LRT = true, LR = i(PV)
+	 :- X =:= Y | Q = i(LP), {p(LP), rt(LRT), r(LR), $lp}, LRT = false, LR = i(LRP),
+	 LRP = null.
+% delete a node with a child (l: edge to it's child, r: null, prev: edge from previous(!=child))
+Q = i(P, delete(X)), {p(P), v(V), l(L), r(R), rt(RT), prev(PV)}, V = Y, L = i(LP),
+	R = i(RP), RP = null, RT = false, {p(LP), rt(LRT), $lp}, LRT = false, 
+	{p(PVP), rt(PVRT), r(PVR), $pvp}, PVRT = true, PVR = i(PV)
+	 :- X =:= Y | Q = i(LP), {p(LP), rt(LRT), $lp}, LRT = false, 
+	{p(PVP), rt(PVRT), r(PVR), $pvp}, PVRT = false, PVR = i(PV), PV = null.
+% delete a node with a child (l: edge to it's child, r: edge to next, prev: edge from previous(=child))
+Q = i(P, delete(X)), {p(P), v(V), l(L), r(R), rt(RT), prev(PV)}, V = Y, L = i(LP),
+	R = i(RP), RT = true, {p(LP), r(LR), rt(LRT), $lp}, LR = i(PV), LRT = true,
+	 :- X =:= Y | Q = i(LP), {p(LP), r(LR), rt(LRT), $lp}, LR = i(RP), LRT = true.
+% delete a node with a child (l: edge to it's child, r: edge to next, prev: edge from previous(!=child))
+Q = i(P, delete(X)), {p(P), v(V), l(L), r(R), rt(RT), prev(PV)}, V = Y, L = i(LP),
+	R = i(RP), RT = true, {p(LP), rt(LRT), $lp}, LRT = false,
+	{p(PVP), r(PVR), rt(PVRT), $pvp}, PVR = i(PV), PVRT = true 
+	 :- X =:= Y | Q = i(LP), {p(LP), rt(LRT), $lp}, LRT = true,
+	{p(PVP), r(PVR), rt(PVRT), $pvp}, PVR = i(RP), PVRT = true.
+% delete a node with two children
+Q = i(P, delete(X)), {p(P), v(V), l(L), r(R), rt(RT), $p}, V = Y, L = i(LP), R = i(RP),
+	RT = false, {p(LP), v(LV), $lp}, {p(RP), v(RV), $rp} :- X =:= Y |
+	Q = i(P, delete(X, searchMax(S))), {p(P), v(V), l(L), r(R), rt(RT), $p}, V = Y,
+	L = i(LP, S), R = i(RP), RT = false, {p(LP), v(LV), $lp}, {p(RP), v(RV), $rp}.
+Q = i(P, delete(X, searchMax(S))), {p(P), v(V), l(L), r(R), $p}, V = Y, M = i(LP, S),
+	{p(LP), v(LV), l(LL), r(LR), rt(LRT)}, LL = i(LLP), LR = i(LRP), LRT = true
+	:- int(X), int(Y) | Q = i(P), {p(P), v(LV), l(L), r(R), $p}, M = i(LLP).
+Q = i(P, S), D = searchMax(S), {p(P), r(R), rt(RT), $p}, R = i(RP), {p(RP), $rp},
+	RT = false :- Q = i(P), {p(P), r(R), rt(RT), $p}, R = i(RP, S), RT = false,
+	D = searchMax(S), {p(RP), $rp}.
+
 Q = i(P, delete(X)), {p(P), v(V), l(L), $p}, V = Y, L = i(LP) :- X < Y |
 	Q = i(P), {p(P), v(V), l(L), $p}, V = Y, L = i(LP, delete(X)).
-Q = i(P, delete(X)), {p(P), v(V), r(R), $p}, V = Y, R = i(RP) :- X > Y |
-	Q = i(P), {p(P), v(V), r(R), $p}, V = Y, R = i(RP, delete(X)).
+Q = i(P, delete(X)), {p(P), v(V), r(R), rt(RT), $p}, V = Y, R = i(RP), RT = false
+	:- X > Y | Q = i(P), {p(P), v(V), r(R), rt(RT), $p}, V = Y, R = i(RP, delete(X)),
+	RT = false.
 Q = i(P, delete(X)), P = null :- int(X) | Q = i(P), P = null.

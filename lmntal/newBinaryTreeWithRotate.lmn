@@ -1,0 +1,71 @@
+
+run = [insert(3), insert(2), insert(5), insert(4), insert(6), rotateL(3), rotateR(5)].
+
+head = i(P), P = null.
+head = i(P), run = [X | Y] :- head = i(P, X), run = Y.
+
+% insert rules
+Q = i(P, insert(X)), P = null :- int(X) | 
+	Q = i(P), {p(P), v(V), l(L), r(R)}, V = X, 
+	L = i(LP), R = i(RP), LP = null, RP = null. 
+Q = i(P, insert(X)), {p(P), v(V), $p}, V = Y :- X =:= Y |
+	Q = i(P), {p(P), v(V), $p}, V = Y.
+Q = i(P, insert(X)), {p(P), v(V), l(L), $p}, V = Y, L = i(LP) :- X < Y |
+	Q = i(P), {p(P), v(V), l(L), $p}, V = Y, L = i(LP, insert(X)).
+Q = i(P, insert(X)), {p(P), v(V), r(R), $p}, V = Y, R = i(RP) :- X > Y |
+	Q = i(P), {p(P), v(V), r(R), $p}, V = Y, R = i(RP, insert(X)).
+
+% rotateL rules
+Q = i(P, rotateL(X)), {p(P), v(V), r(R), $p}, V = Y, R = i(RP),
+	{p(RP), l(RL), $rp}, RL = i(RLP) :- X =:= Y | Q = i(RP), 
+	{p(RP), l(RL), $rp}, RL = i(P), {p(P), v(V), r(R), $p}, V = Y,
+	R = i(RLP).
+Q = i(P, rotateL(X)), {p(P), v(V), l(L), $p}, V = Y, L = i(LP) :- X < Y |
+	Q = i(P), {p(P), v(V), l(L), $p}, V = Y, L = i(LP, rotateL(X)).
+Q = i(P, rotateL(X)), {p(P), v(V), r(R), $p}, V = Y, R = i(RP) :- X > Y |
+	Q = i(P), {p(P), v(V), r(R), $p}, V = Y, R = i(RP, rotateL(X)).
+Q = i(P, rotateL(X)), P = null :- int(X) | Q = i(P), P = null.
+
+% rotateR rules
+Q = i(P, rotateR(X)), {p(P), v(V), l(L), $p}, V = Y, L = i(LP),
+	{p(LP), r(LR), $lp}, LR = i(LRP) :- X =:= Y | Q = i(LP), 
+	{p(LP), r(LR), $lp}, LR = i(P), {p(P), v(V), l(L), $p}, V = Y,
+	L = i(LRP).
+Q = i(P, rotateR(X)), {p(P), v(V), l(L), $p}, V = Y, L = i(LP) :- X < Y |
+	Q = i(P), {p(P), v(V), l(L), $p}, V = Y, L = i(LP, rotateR(X)).
+Q = i(P, rotateR(X)), {p(P), v(V), r(R), $p}, V = Y, R = i(RP) :- X > Y |
+	Q = i(P), {p(P), v(V), r(R), $p}, V = Y, R = i(RP, rotateR(X)).
+Q = i(P, rotateR(X)), P = null :- int(X) | Q = i(P), P = null.
+
+% search rules
+Q = i(P, search(X)), {p(P), v(V), $p}, V = Y :- X =:= Y |
+	Q = i(P), {p(P), v(V), $p}, V = Y, true(X).
+Q = i(P, search(X)), {p(P), v(V), l(L), $p}, V = Y, L = i(LP) :- X < Y |
+	Q = i(P), {p(P), v(V), l(L), $p}, V = Y, L = i(LP, search(X)).
+Q = i(P, search(X)), {p(P), v(V), r(R), $p}, V = Y, R = i(RP) :- X > Y |
+	Q = i(P), {p(P), v(V), r(R), $p}, V = Y, R = i(RP, search(X)).
+Q = i(P, search(X)), P = null :- Q = i(P), P = null, false(X). 
+
+% delete rules
+Q = i(P, delete(X)), {p(P), v(V), l(L), r(R)}, V = Y, L = i(LP), R = i(RP),
+	LP = null, RP = null :- X =:= Y | Q = i(P), P = null.
+Q = i(P, delete(X)), {p(P), v(V), l(L), r(R)}, V = Y, L = i(LP), R = i(RP),
+	LP = null, {p(RP), v(RV), $rp} :- X =:= Y |
+	Q = i(RP), {p(RP), v(RV), $rp}.
+Q = i(P, delete(X)), {p(P), v(V), l(L), r(R)}, V = Y, L = i(LP), R = i(RP),
+	{p(LP), v(LV), $lp}, RP = null :- X =:= Y |
+	Q = i(LP), {p(LP), v(LV), $lp}.
+Q = i(P, delete(X)), {p(P), v(V), l(L), r(R)}, V = Y, L = i(LP), R = i(RP),
+	{p(LP), v(LV), $lp}, {p(RP), v(RV), $rp} :- X =:= Y |
+	Q = i(P, delete(X, searchMax(S))), {p(P), v(V), l(L), r(R)}, V = Y,
+	L = i(LP, S), R = i(RP), {p(LP), v(LV), $lp}, {p(RP), v(RV), $rp}.
+Q = i(P, delete(X, searchMax(S))), {p(P), v(V), l(L), r(R)}, V = Y, M = i(LP, S),
+	{p(LP), v(LV), l(LL), r(LR)}, LL = i(LLP), LR = i(null) :- int(X), int(Y) |
+	Q = i(P), {p(P), v(LV), l(L), r(R)}, M = i(LLP).
+Q = i(P, S), D = searchMax(S), {p(P), r(R), $p}, R = i(RP), {p(RP), $rp} :-
+	Q = i(P), {p(P), r(R), $p}, R = i(RP, S), D = searchMax(S), {p(RP), $rp}.
+Q = i(P, delete(X)), {p(P), v(V), l(L), $p}, V = Y, L = i(LP) :- X < Y |
+	Q = i(P), {p(P), v(V), l(L), $p}, V = Y, L = i(LP, delete(X)).
+Q = i(P, delete(X)), {p(P), v(V), r(R), $p}, V = Y, R = i(RP) :- X > Y |
+	Q = i(P), {p(P), v(V), r(R), $p}, V = Y, R = i(RP, delete(X)).
+Q = i(P, delete(X)), P = null :- int(X) | Q = i(P), P = null.
