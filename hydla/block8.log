@@ -1,0 +1,368 @@
+WARNING: blkthk is completely unbound in default constraint
+
+------ Result of Simulation ------
+---------Case 1---------
+---------1---------
+---------PP 1---------
+unadopted modules: {}
+positive 	: 
+negative 	: 
+t	: 0
+barlen	: 4
+barspd	: 1
+barx	: 10
+bary	: 0
+blklen	: 2
+blkthk	: 1
+ceiling	: 20
+leftwall	: 0
+rightwall	: 20
+x	: 8
+y	: 8
+barlen'	: 0
+barspd'	: 0
+barx'	: 0
+bary'	: 0
+blklen'	: 0
+ceiling'	: 0
+leftwall'	: 0
+rightwall'	: 0
+x'	: 1
+y'	: -1
+barx''	: 0
+x''	: 0
+y''	: 0
+---------IP 2---------
+unadopted modules: {BAR}
+unsat mod	: {BALL, BAR, BARMOVEN}
+		  {BAR, BARMOVEP}
+unsat cons	: {barx''=0, barx'=-1}
+		  {barx''=0, barx'=1}
+positive 	: x->barx-=>barx'=1
+negative 	: 
+t	: 0->8
+barlen	: 4
+barspd	: 1
+barx	: 10+t
+bary	: 0
+blklen	: 2
+ceiling	: 20
+leftwall	: 0
+rightwall	: 20
+x	: 8+t
+y	: 8+t*(-1)
+barlen'	: 0
+barspd'	: 0
+barx'	: 1
+bary'	: 0
+blklen'	: 0
+ceiling'	: 0
+leftwall'	: 0
+rightwall'	: 0
+x'	: 1
+y'	: -1
+barx''	: 0
+x''	: 0
+y''	: 0
+---------2---------
+---------PP 4---------
+unadopted modules: {BALL}
+unsat mod	: {BALL, BAR, BARCOLL, BARMOVEP, CONST}
+		  {BALL, BARCOLL, BARMOVEP, CONST}
+		  {BALL, BARCOLL, CONST}
+unsat cons	: {y''=0, y'=-y'-}
+		  {y''=0, y'=-y'-}
+		  {y''=0, y'=-y'-}
+positive 	: barx--barlen/2<=x-&x-<=barx-+barlen/2&y-<=0=>x''=0&y'=-y'-
+negative 	: 
+t	: 8
+barlen	: 4
+barspd	: 1
+barx	: 18
+bary	: 0
+blklen	: 2
+ceiling	: 20
+leftwall	: 0
+rightwall	: 20
+x	: 16
+y	: 0
+barlen'	: 0
+barspd'	: 0
+barx'	: 1
+bary'	: 0
+blklen'	: 0
+ceiling'	: 0
+leftwall'	: 0
+rightwall'	: 0
+x'	: 1
+y'	: 1
+barx''	: 0
+x''	: 0
+---------IP 5---------
+unadopted modules: {}
+positive 	: 
+negative 	: barx--barlen/2<=x-&x-<=barx-+barlen/2&y-<=0=>x''=0&y'=-y'-
+t	: 8->12
+barlen	: 4
+barspd	: 1
+barx	: 10+t
+bary	: 0
+blklen	: 2
+ceiling	: 20
+leftwall	: 0
+rightwall	: 20
+x	: 8+t
+y	: t+(-8)
+barlen'	: 0
+barspd'	: 0
+barx'	: 1
+bary'	: 0
+blklen'	: 0
+ceiling'	: 0
+leftwall'	: 0
+rightwall'	: 0
+x'	: 1
+y'	: 1
+barx''	: 0
+x''	: 0
+y''	: 0
+---------3---------
+---------PP 6---------
+unadopted modules: {BALL}
+unsat mod	: {BALL, CONST, XWALL}
+unsat cons	: {x''=0, x'=-x'-}
+positive 	: (x-<=leftwall|x->=rightwall)=>x'=-x'-&y''=0
+negative 	: 
+t	: 12
+barlen	: 4
+barspd	: 1
+barx	: 22
+bary	: 0
+blklen	: 2
+ceiling	: 20
+leftwall	: 0
+rightwall	: 20
+x	: 20
+y	: 4
+barlen'	: 0
+barspd'	: 0
+barx'	: 1
+bary'	: 0
+blklen'	: 0
+ceiling'	: 0
+leftwall'	: 0
+rightwall'	: 0
+x'	: -1
+y'	: 1
+barx''	: 0
+y''	: 0
+---------IP 7---------
+unadopted modules: {}
+positive 	: 
+negative 	: (x-<=leftwall|x->=rightwall)=>x'=-x'-&y''=0
+t	: 12->28
+barlen	: 4
+barspd	: 1
+barx	: 10+t
+bary	: 0
+blklen	: 2
+ceiling	: 20
+leftwall	: 0
+rightwall	: 20
+x	: 32+t*(-1)
+y	: t+(-8)
+barlen'	: 0
+barspd'	: 0
+barx'	: 1
+bary'	: 0
+blklen'	: 0
+ceiling'	: 0
+leftwall'	: 0
+rightwall'	: 0
+x'	: -1
+y'	: 1
+barx''	: 0
+x''	: 0
+y''	: 0
+---------4---------
+---------PP 8---------
+unadopted modules: {BALL}
+unsat mod	: {BALL, CEILING, CONST}
+unsat cons	: {y''=0, y'=-y'-}
+positive 	: y->=ceiling=>x''=0&y'=-y'-
+negative 	: 
+t	: 28
+barlen	: 4
+barspd	: 1
+barx	: 38
+bary	: 0
+blklen	: 2
+ceiling	: 20
+leftwall	: 0
+rightwall	: 20
+x	: 4
+y	: 20
+barlen'	: 0
+barspd'	: 0
+barx'	: 1
+bary'	: 0
+blklen'	: 0
+ceiling'	: 0
+leftwall'	: 0
+rightwall'	: 0
+x'	: -1
+y'	: -1
+barx''	: 0
+x''	: 0
+---------IP 9---------
+unadopted modules: {}
+positive 	: 
+negative 	: y->=ceiling=>x''=0&y'=-y'-
+t	: 28->32
+barlen	: 4
+barspd	: 1
+barx	: 10+t
+bary	: 0
+blklen	: 2
+ceiling	: 20
+leftwall	: 0
+rightwall	: 20
+x	: 32+t*(-1)
+y	: 48+t*(-1)
+barlen'	: 0
+barspd'	: 0
+barx'	: 1
+bary'	: 0
+blklen'	: 0
+ceiling'	: 0
+leftwall'	: 0
+rightwall'	: 0
+x'	: -1
+y'	: -1
+barx''	: 0
+x''	: 0
+y''	: 0
+---------5---------
+---------PP 10---------
+unadopted modules: {BALL}
+unsat mod	: {BALL, CONST, XWALL}
+unsat cons	: {x''=0, x'=-x'-}
+positive 	: (x-<=leftwall|x->=rightwall)=>x'=-x'-&y''=0
+negative 	: 
+t	: 32
+barlen	: 4
+barspd	: 1
+barx	: 42
+bary	: 0
+blklen	: 2
+ceiling	: 20
+leftwall	: 0
+rightwall	: 20
+x	: 0
+y	: 16
+barlen'	: 0
+barspd'	: 0
+barx'	: 1
+bary'	: 0
+blklen'	: 0
+ceiling'	: 0
+leftwall'	: 0
+rightwall'	: 0
+x'	: 1
+y'	: -1
+barx''	: 0
+y''	: 0
+---------IP 11---------
+unadopted modules: {}
+positive 	: 
+negative 	: (x-<=leftwall|x->=rightwall)=>x'=-x'-&y''=0
+t	: 32->48
+barlen	: 4
+barspd	: 1
+barx	: 10+t
+bary	: 0
+blklen	: 2
+ceiling	: 20
+leftwall	: 0
+rightwall	: 20
+x	: t+(-32)
+y	: 48+t*(-1)
+barlen'	: 0
+barspd'	: 0
+barx'	: 1
+bary'	: 0
+blklen'	: 0
+ceiling'	: 0
+leftwall'	: 0
+rightwall'	: 0
+x'	: 1
+y'	: -1
+barx''	: 0
+x''	: 0
+y''	: 0
+---------6---------
+---------PP 12---------
+unadopted modules: {}
+positive 	: 
+negative 	: 
+t	: 48
+barlen	: 4
+barspd	: 1
+barx	: 58
+bary	: 0
+blklen	: 2
+ceiling	: 20
+leftwall	: 0
+rightwall	: 20
+x	: 16
+y	: 0
+barlen'	: 0
+barspd'	: 0
+barx'	: 1
+bary'	: 0
+blklen'	: 0
+ceiling'	: 0
+leftwall'	: 0
+rightwall'	: 0
+x'	: 1
+y'	: -1
+barx''	: 0
+x''	: 0
+y''	: 0
+---------IP 13---------
+unadopted modules: {BALL}
+unsat mod	: {BALL, FINISH}
+		  {BALL, FINISH}
+unsat cons	: {x''=0, x'=0}
+		  {y''=0, y'=0}
+positive 	: y-<0=>[](x'=0&y'=0)
+negative 	: 
+t	: 48->Infinity
+barlen	: 4
+barspd	: 1
+barx	: 10+t
+bary	: 0
+blklen	: 2
+ceiling	: 20
+leftwall	: 0
+rightwall	: 20
+x	: 16
+y	: 0
+barlen'	: 0
+barspd'	: 0
+barx'	: 1
+bary'	: 0
+blklen'	: 0
+ceiling'	: 0
+leftwall'	: 0
+rightwall'	: 0
+x'	: 0
+y'	: 0
+barx''	: 0
+# time reached limit
+
+
+
+Simulation Time : 7.104586 s
+Finish Time : 7.108747 s
+
