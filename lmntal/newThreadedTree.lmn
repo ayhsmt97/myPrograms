@@ -1,0 +1,91 @@
+
+run = [
+	insert(6),
+	insert(3),
+	insert(8),
+	insert(1),
+	insert(5),
+	insert(4),
+	insert(7),
+	insert(11),
+	insert(9),
+	insert(13),
+	insert(10),
+	traverse
+	].
+
+head = i(P), P = null.
+head = i(P), run = [X | Y] :- head = i(P, X), run = Y.
+
+% insert rules
+Q = i(P, insert(X)), P = null :- int(X) | Q = i(P),
+	P = n(X, L, R, PREV, NEXT), L = i(null), R = i(null),
+	null = i(PREV), NEXT = i(null).
+Q = i(P, insert(X)), P = n(V, L, R, PREV, NEXT), L = i(null) :-
+	X < V | Q = i(P), P = n(V, L, R, NEWPREV, NEXT), L = i(LP),
+	LP = n(X, LL, LR, LPREV, LNEXT), LL = i(null), LR = i(null),
+	PREV = LPREV, LNEXT = i(NEWPREV).
+Q = i(P, insert(X)), P = n(V, L, R, PREV, NEXT), R = i(null) :-
+	X > V | Q = i(P), P = n(V, L, R, PREV, NEWNEXT), R = i(RP),
+	RP = n(X, RL, RR, RPREV, RNEXT), RL = i(null), RR = i(null),
+	NEWNEXT = i(RPREV), RNEXT = NEXT.
+Q = i(P, insert(X)), P = n(V, L, R, PREV, NEXT), L = i(LP),
+	LP = n(LV, LL, LR, LPREV, LNEXT) :- X < V | Q = i(P),
+	P = n(V, L, R, PREV, NEXT), L = i(LP, insert(X)),
+	LP = n(LV, LL, LR, LPREV, LNEXT).
+Q = i(P, insert(X)), P = n(V, L, R, PREV, NEXT), R = i(RP),
+	RP = n(RV, RL, RR, RPREV, RNEXT) :- X > V | Q = i(P),
+	P = n(V, L, R, PREV, NEXT), R = i(RP, insert(X)),
+	RP = n(RV, RL, RR, RPREV, RNEXT).
+Q = i(P, insert(X)), P = n(V, L, R, PREV, NEXT) :- X =:= V |
+	Q = i(P), P = n(V, L, R, PREV, NEXT).
+
+% search rules
+Q = i(P, search(X)), P = n(V, L, R, PREV, NEXT) :- X =:= V |
+	Q = i(P), P = n(V, L, R, PREV, NEXT), true(X).
+Q = i(P, search(X)), P = n(V, L, R, PREV, NEXT), L = i(LP) :-
+	X < V | Q = i(P), P = n(V, L, R, PREV, NEXT), L = i(LP, search(X)).
+Q = i(P, search(X)), P = n(V, L, R, PREV, NEXT), R = i(RP) :-
+	X > V | Q = i(P), P = n(V, L, R, PREV, NEXT), R = i(RP, search(X)).
+Q = i(P, search(X)), P = null :- Q = i(P), P = null, false(X). 
+
+% delete rules
+% delete a node with no child
+Q = i(P, delete(X)), P = n(V, L, R, PREV, NEXT), L = i(null), R = i(null),
+	PVP = i(PREV), NEXT = i(NP) :- X =:= V | Q = i(null), NP = i(PVP).
+% delete a node with a child
+Q = i(P, delete(X)), P = n(V, L, R, PREV, NEXT), L = i(LP), R = i(null),
+	PVP = i(PREV), NEXT = i(NP) :- X =:= V | Q = i(LP), PVP = i(NP).
+Q = i(P, delete(X)), P = n(V, L, R, PREV, NEXT), L = i(null), R = i(RP),
+	PVP = i(PREV), NEXT = i(NP) :- X =:= V | Q = i(RP), PVP = i(NP).
+% delete a node with two children
+Q = i(P, delete(X)), P = n(V, L, R, PREV, NEXT), L = i(LP), R = i(RP),
+	LP = n(LV, LL, LR, LPREV, LNEXT), RP = n(RV, RL, RR, RPREV, RNEXT) :-
+	X =:= V | Q = i(P, delete(X, searchMax(S))), P = n(V, L, R, PREV, NEXT),
+	L = i(LP, S), R = i(RP), LP = n(LV, LL, LR, LPREV, LNEXT),
+	RP = n(RV, RL, RR, RPREV, RNEXT).
+Q = i(P, delete(X, searchMax(S))), P = n(V, L, R, PREV, NEXT), M = i(MP, S),
+	MP = n(MV, ML, MR, MPREV, MNEXT), MR = i(null), MNEXT = i(PREV)
+	:- int(X), int(V) | Q = i(P), P = n(MV, L, R, MPREV, NEXT), M = ML.
+Q = i(P, S), D = searchMax(S), P = n(V, L, R, PREV, NEXT), R = i(RP),
+	RP = n(RV, RL, RR, RPREV, RNEXT) :- Q = i(P), P = n(V, L, R, PREV, NEXT),
+	R = i(RP, S), D = searchMax(S), RP = n(RV, RL, RR, RPREV, RNEXT).
+Q = i(P, delete(X)), P = n(V, L, R, PREV, NEXT), L = i(LP) :- X < V |
+	Q = i(P), P = n(V, L, R, PREV, NEXT), L = i(LP, delete(X)).
+Q = i(P, delete(X)), P = n(V, L, R, PREV, NEXT), R = i(RP) :- X > V |
+	Q = i(P), P = n(V, L, R, PREV, NEXT), R = i(RP, delete(X)).
+Q = i(P, delete(X)), P = null :- int(X) | Q = i(P), P = null.
+
+% traverse rules
+PV = i(PREV, traverse([X])), P = n(V, L, R, PREV, NEXT), NEXT = i(NT) :-
+	V1= V, int(V) | PV = i(PREV), P = n(V, L, R, PREV, NEXT), 
+	NEXT = i(NT, traverse([V1|X])).
+PV = i(null, traverse(L)), head = i(P, t) :- PV = i(null), traverse(L), head = i(P).
+Q = i(P, traverse(X)), P = n(V, L, R, PREV, NEXT), L = i(LP),
+	LP = n(LV, LL, LR, LPREV, LNEXT) :- Q = i(P), P = n(V, L, R, PREV, NEXT), 
+	L = i(LP, traverse(X)), LP = n(LV, LL, LR, LPREV, LNEXT).
+Q = i(P, traverse([])), P = n(V, L, R, PREV, NEXT), null = i(PREV), NEXT = i(NT) :-
+	V1 = V, int(V) | Q = i(P), P = n(V, L, R, PREV, NEXT), null = i(PREV), 
+	NEXT = i(NT, traverse([V1])). 
+head = i(P, traverse), P = n(V, L, R, PREV, NEXT), L = i(LP) :-
+	head = i(P, t), P = n(V, L, R, PREV, NEXT), L = i(LP, traverse([])).
