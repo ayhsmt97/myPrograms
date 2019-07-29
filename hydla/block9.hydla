@@ -1,6 +1,6 @@
 
 INIT <=> x = 8 & y = 8 & x' = 1 & y' = -1 & leftwall = 0 & rightwall = 20 & ceiling = 20 /*& score = 0*/
-             & blklen = 2 & blkthk = 1 & barx = 10 & barx' = 0 & bary = 0 & barlen = 4 & barspd = 1.
+             & blklen = 2 & blkthk = 1 & barx = 10 & barx' = 0 & bary = 0 & barlen = 4 & barspd = 1 & barst = 0.
 //BLOCKX := {4*j+2 | i in {0 | k in {0..2}}, j in {i..4}}.
 //BLOCKY := {3*i+10 | i in {0..2}, j in {0 | k in {0..4}}}.
 //BLKVISIBLE := {blkvisible1..blkvisible15}.
@@ -20,11 +20,15 @@ BALL <=> [](x'' = 0 & y'' = 0).
 //SCORE <=> [](score' = 0).
 BAR <=> [](barx'' = 0).
 BARCOLL <=> [](barx--barlen/2 <= x- <= barx-+barlen/2 & y- <= 0 => x'' = 0 & y' = -y'-).
-BARSTAY <=> [](barx' = 0).
-BARMOVEN <=> [](x'- < 0 & barx--barlen/2 > leftwall => barx' = -barspd).
-BARMOVEP <=> [](x'- > 0 & barx-+barlen/2 < rightwall => barx' = barspd).
+BARSTAY <=> [](barst = 0 => barx' = x'-).
+BARMOVEN <=> [](barst- < 0 & barx--barlen/2 > leftwall => barx' = -2*x'-).
+BARMOVEP <=> [](barst- > 0 & barx-+barlen/2 < rightwall => barx' = 2*x'-).
+BARST <=> [](barst' = 0).
+BARSTATEN <=> [](x- < barx => barst = -1).
+BARSTATEP <=> [](x- > barx => barst = 1).
+BARSTATES <=> [](x- = barx => barst = 0).
 
-XWALL <=> [](x- <= leftwall | x- >= rightwall => x' = -x'- & y'' = 0).
+XWALL <=> [](x- <= leftwall | x- >= rightwall => x' = -x'- & y' = y'-).
 CEILING <=> [](y- >= ceiling => x'' = 0 & y' = -y'-).
 //CEILING <=> [](y- >= ceiling => x' = 0 & y' = 0).
 FINISH <=> [](y- < 0 => [](x' = 0 & y' = 0)).
@@ -32,4 +36,5 @@ FINISH <=> [](y- < 0 => [](x' = 0 & y' = 0)).
 INIT, CONST, BAR /*BLKVISIBLEINITS*/.
 BALL << (XWALL, CEILING) << BARCOLL << FINISH.
 //(SCORE, BALL, BLKVISIBLECONSTS) << BLOCKCOLS.
-(BAR, BARSTAY) << (BARMOVEN, BARMOVEP).
+BAR << (BARSTAY, BARMOVEN, BARMOVEP).
+BARST << (BARSTATEN, BARSTATEP, BARSTATES).
