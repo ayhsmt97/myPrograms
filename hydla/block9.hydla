@@ -19,22 +19,16 @@ CONST <=> [](leftwall' = 0 & rightwall' = 0 & ceiling' = 0 & blklen' = 0 & bary'
 BALL <=> [](x'' = 0 & y'' = 0).
 //SCORE <=> [](score' = 0).
 BAR <=> [](barx'' = 0).
+BARSTAY <=> [](barx' = 0).
 BARCOLL <=> [](barx--barlen/2 <= x- <= barx-+barlen/2 & y- <= 0 => x'' = 0 & y' = -y'-).
-BARSTAY <=> [](barst = 0 => barx' = x'-).
-BARMOVEN <=> [](barst- < 0 & barx--barlen/2 > leftwall => barx' = -2*x'-).
-BARMOVEP <=> [](barst- > 0 & barx-+barlen/2 < rightwall => barx' = 2*x'-).
-BARST <=> [](barst' = 0).
-BARSTATEN <=> [](x- < barx => barst = -1).
-BARSTATEP <=> [](x- > barx => barst = 1).
-BARSTATES <=> [](x- = barx => barst = 0).
+BARMOVEP <=> [](x- >= barx & barx-+barlen/2 < rightwall => barx' = barspd).
+BARMOVEN <=> [](x- < barx & barx--barlen/2 > leftwall => barx' = -barspd).
 
-XWALL <=> [](x- <= leftwall | x- >= rightwall => x' = -x'- & y' = y'-).
+XWALL <=> []((x- <= leftwall | x- >= rightwall) & y- > 0 => x' = -x'- & y' = y'-).
 CEILING <=> [](y- >= ceiling => x'' = 0 & y' = -y'-).
 //CEILING <=> [](y- >= ceiling => x' = 0 & y' = 0).
-FINISH <=> [](y- < 0 => [](x' = 0 & y' = 0)).
 
 INIT, CONST, BAR /*BLKVISIBLEINITS*/.
-BALL << (XWALL, CEILING) << BARCOLL << FINISH.
+BALL << (XWALL, CEILING) << BARCOLL.
 //(SCORE, BALL, BLKVISIBLECONSTS) << BLOCKCOLS.
-BAR << (BARSTAY, BARMOVEN, BARMOVEP).
-BARST << (BARSTATEN, BARSTATEP, BARSTATES).
+(BAR, BARSTAY) << (BARMOVEP, BARMOVEN).
